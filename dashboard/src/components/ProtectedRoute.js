@@ -13,9 +13,17 @@ const getCookie = (name) => {
   return null;
 };
 
+// Helper to set cookie
+const setCookie = (name, value, days = 1) => {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = `; expires=${date.toUTCString()}`;
+  document.cookie = `${name}=${value || ""}${expires}; path=/; SameSite=Lax`;
+};
+
 // Helper to clear cookie
 const clearCookie = (name) => {
-  document.cookie = `${name}=; Max-Age=0; path=/; domain=localhost; SameSite=Lax`;
+  document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
 };
 
 const ProtectedRoute = ({ children }) => {
@@ -23,21 +31,31 @@ const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const logout = () => {
-    // Clear cookie and redirect to login page on port 3000
+    // Clear cookie and redirect to login page
     clearCookie("token");
-    window.location.href = "http://localhost:3000/login";
+    window.location.href = `${process.env.REACT_APP_FRONTEND_URL || "http://localhost:3000"}/login`;
   };
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = getCookie("token");
+      // Check if token is in URL query parameters (useful for cross-domain redirect)
+      const urlParams = new URLSearchParams(window.location.search);
+      let token = urlParams.get("token");
+      if (token) {
+        setCookie("token", token, 1);
+        // Clear token from URL to keep it clean
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else {
+        token = getCookie("token");
+      }
+
       if (!token) {
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = `${process.env.REACT_APP_FRONTEND_URL || "http://localhost:3000"}/login`;
         return;
       }
 
       try {
-        const res = await axios.get("http://localhost:3002/api/auth/me", {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL || "http://localhost:3002"}/api/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

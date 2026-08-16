@@ -19,7 +19,7 @@ const WatchList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3002/allWatchlist")
+      .get(`${process.env.REACT_APP_API_URL || "http://localhost:3002"}/allWatchlist`)
       .then((res) => setWatchlist(res.data))
       .catch((err) => console.log(err));
   }, []);

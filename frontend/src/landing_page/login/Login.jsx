@@ -20,9 +20,10 @@ function Login() {
 
     setLoading(true);
     try {
-      await login(email, password);
+      const data = await login(email, password);
       // Successful login -> Redirect to the dashboard running on port 3001
-      window.location.href = "http://localhost:3001";
+      const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL || "http://localhost:3001";
+      window.location.href = `${dashboardUrl}?token=${data.token}`;
     } catch (err) {
       setError(err);
     } finally {

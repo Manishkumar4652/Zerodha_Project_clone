@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 
 const AuthContext = createContext(null);
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3002";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -21,12 +22,12 @@ export const AuthProvider = ({ children }) => {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     const expires = `; expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value || ""}${expires}; path=/; domain=localhost; SameSite=Lax`;
+    document.cookie = `${name}=${value || ""}${expires}; path=/; SameSite=Lax`;
   };
 
   // Helper to clear cookie
   const clearCookie = (name) => {
-    document.cookie = `${name}=; Max-Age=0; path=/; domain=localhost; SameSite=Lax`;
+    document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
   };
 
   // Verify auth on mount
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const res = await axios.get("http://localhost:3002/api/auth/me", {
+        const res = await axios.get(`${API_URL}/api/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -66,7 +67,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (username, email, password) => {
     try {
-      const res = await axios.post("http://localhost:3002/api/auth/signup", {
+      const res = await axios.post(`${API_URL}/api/auth/signup`, {
         username,
         email,
         password,
@@ -79,7 +80,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post("http://localhost:3002/api/auth/login", {
+      const res = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password,
       });
@@ -101,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = getCookie("token");
       if (token) {
-        await axios.post("http://localhost:3002/api/auth/logout", {}, {
+        await axios.post(`${API_URL}/api/auth/logout`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }

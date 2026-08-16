@@ -9,6 +9,13 @@ function Navbar() {
   const toggleNav = () => setIsNavOpen(!isNavOpen);
   const closeNav = () => setIsNavOpen(false);
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  };
+
   const handleLogout = () => {
     logout();
     closeNav();
@@ -43,7 +50,7 @@ function Navbar() {
             {isAuthenticated ? (
               <>
                 <li className="nav-item mx-3">
-                  <a className="nav-link" href="http://localhost:3001" onClick={closeNav}>
+                  <a className="nav-link" href={`${process.env.REACT_APP_DASHBOARD_URL || "http://localhost:3001"}?token=${getCookie("token")}`} onClick={closeNav}>
                     Dashboard
                   </a>
                 </li>

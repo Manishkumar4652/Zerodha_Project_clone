@@ -33,7 +33,7 @@ const Apps = () => {
     }
 
     try {
-      const res = await axios.get(`http://localhost:3002/api/market-data/stock-price`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL || "http://localhost:3002"}/api/market-data/stock-price`, {
         params: { symbol: symbol.toUpperCase() },
         headers: {
           Authorization: `Bearer ${token}`,
