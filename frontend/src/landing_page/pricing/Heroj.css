@@ -1,0 +1,28 @@
+.charges-section {
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+
+.charges-heading {
+    margin-bottom: 150px;
+}
+
+.charge-card img {
+    width: 180px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.charge-card h3 {
+    color: #424242;
+    font-weight: 500;
+}
+
+.charge-card p {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.8;
+}
+.hadi{
+    font-family: sans-serif;
+}
